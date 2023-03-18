@@ -32,5 +32,16 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/", handlers.Repo.Home)
 	mux.Get("/about", handlers.Repo.About)
 
+	//fileServer := http.FileServer(http.Dir("./static/"))
+	//mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
+	//return mux
+
+	// Create a file server for your files
+	fs := http.FileServer(http.Dir("./static/")) // folder static/images/ isi.jpg, pk ini imagesnya di bypass
+	// We don't want that /assets/ prefix in our file paths, so let's strip it out.
+	prefixHandler := http.StripPrefix("/static/", fs) //no 2
+	mux.Handle("/static/*", prefixHandler)            //there is folder/static/* , should call prefixHandler  -no 1
+
 	return mux
+
 }
